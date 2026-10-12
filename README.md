@@ -18,10 +18,5 @@ This project strictly adheres to the assignment requirements:
 ## How to Run
 Since this project uses no build tools or frameworks, simply clone the repository and open `index.html` in your preferred web browser.
 
-## 👥 Team
-- **[Name]** - Project Manager
-- **[Name]** - Developer
-- **[Name]** - Developer
-
 ---
 *Developed with the assistance of AI tools (ChatGPT/Claude/Copilot) for code formatting and ideation, with all final code understood and reviewed by the team. Version control maintained via small, descriptive GitHub commits.*
