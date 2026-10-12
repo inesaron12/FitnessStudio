@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseStudio - Own your energy</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <!-- Header Landmark (Flexbox) -->
+    <header>
+        <nav>
+            <a href="#home" class="logo">Pulse<span>Studio</span></a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#membership">Become a member</a></li>
+                <li><a href="#classes">Our Classes</a></li>
+                <li><a href="#staff">Our Staff</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home / Hero Section (CSS Grid Outer, Flexbox Inner) -->
+        <section id="home" class="home">
+            <div class="home-container">
+
+                <!-- Left Column Wrapper -->
+                <div class="home-content">
+                    <span class="eyebrow">Welcome to PulseStudio</span>
+
+                    <!-- ONLY one H1 tag on the entire site -->
+                    <h1>OWN YOUR <br><span class="accent-text">ENERGY.</span></h1>
+
+                    <p class="home-description">
+                        A modern space designed to elevate your strength, endurance, and focus. Premium equipment,
+                        expert coaching, and dynamic group sessions built for real results.
+                    </p>
+
+                    <!-- Flexbox Button Group -->
+                    <div class="home-actions">
+                        <a href="#membership" class="btn btn-primary">Become a Member</a>
+                        <a href="#classes" class="btn btn-secondary">View Classes</a>
+                    </div>
+
+                    <!-- Flexbox Quick Stats -->
+                    <div class="home-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">30+</span>
+                            <span class="stat-label">Weekly Classes</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">12</span>
+                            <span class="stat-label">Pro Coaches</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Dedication</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Highlight Card -->
+                <div class="home-card">
+                    <div class="card-badge">Next Session</div>
+                    <h3>Sunrise HIIT & Power</h3>
+                    <p class="card-time">⏰ Tomorrow at 07:00 AM</p>
+                    <p class="card-desc">High-intensity interval training designed to jumpstart your energy and
+                        metabolism.</p>
+                    <a href="#classes" class="card-link">See Schedule &rarr;</a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Membership Tiers Section (CSS Grid) -->
+        <section id="membership" class="section">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-subtitle">Flexible Options</span>
+                    <h2>Membership Plans</h2>
+                </div>
+                <div class="pricing-grid">
+                    <article class="pricing-card">
+                        <h3>Day Pass</h3>
+                        <p class="price">$25 <span>/ day</span></p>
+                        <ul class="plan-features">
+                            <li>Full gym floor access</li>
+                            <li>1 Group class included</li>
+                            <li>Locker room & shower access</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-secondary">Get Pass</a>
+                    </article>
+
+                    <article class="pricing-card featured">
+                        <span class="popular-tag">Most Popular</span>
+                        <h3>Unlimited Monthly</h3>
+                        <p class="price">$50 <span>/ mo</span></p>
+                        <ul class="plan-features">
+                            <li>Unlimited group classes</li>
+                            <li>24/7 Gym access</li>
+                            <li>1 Monthly 1-on-1 coaching</li>
+                            <li>Sauna & recovery lounge</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-primary">Join Now</a>
+                    </article>
+
+                    <article class="pricing-card">
+                        <h3>VIP Annual</h3>
+                        <p class="price">$65 <span>/ mo</span></p>
+                        <ul class="plan-features">
+                            <li>All Monthly features</li>
+                            <li>Free studio merch kit</li>
+                            <li>Guest passes (2/month)</li>
+                            <li>Priority class booking</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-secondary">Join Annual</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Class Schedule Section (CSS Grid) -->
+        <section id="classes" class="section alt-bg">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-subtitle">Find Your Flow</span>
+                    <h2>Weekly Schedule</h2>
+                </div>
+                <div class="schedule-grid">
+                    <article class="class-card">
+                        <div class="class-header">
+                            <span class="class-time">07:00 AM - 08:00 AM</span>
+                            <span class="class-tag tag-hiit">HIIT</span>
+                        </div>
+                        <h3>Sunrise Conditioning</h3>
+                        <div class="class-footer">
+                            <span>Mon / Wed / Fri</span>
+                            <span>Alex Rivera</span>
+                        </div>
+                    </article>
+
+                    <article class="class-card">
+                        <div class="class-header">
+                            <span class="class-time">08:30 AM - 09:30 AM</span>
+                            <span class="class-tag tag-yoga">Yoga</span>
+                        </div>
+                        <h3>Vinyasa Core Flow</h3>
+                        <div class="class-footer">
+                            <span>Daily</span>
+                            <span>Maya Lin</span>
+                        </div>
+                    </article>
+
+                    <article class="class-card">
+                        <div class="class-header">
+                            <span class="class-time">05:30 PM - 06:30 PM</span>
+                            <span class="class-tag tag-strength">Strength</span>
+                        </div>
+                        <h3>Sculpt & Reform</h3>
+                        <div class="class-footer">
+                            <span>Tue / Thu / Sat</span>
+                            <span>David Vance</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staff Section (CSS Grid) -->
+        <section id="staff" class="section">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-subtitle">Expert Guidance</span>
+                    <h2>Meet Our Coaches</h2>
+                </div>
+                <div class="staff-grid">
+                    <article class="staff-card">
+                        <div class="staff-avatar">AR</div>
+                        <h3>Alex Rivera</h3>
+                        <p class="staff-role">Head HIIT & Power Coach</p>
+                        <p class="staff-bio">10+ years in athletic conditioning and interval movement.</p>
+                    </article>
+
+                    <article class="staff-card">
+                        <div class="staff-avatar">ML</div>
+                        <h3>Maya Lin</h3>
+                        <p class="staff-role">Yoga & Recovery Lead</p>
+                        <p class="staff-bio">Specializes in mobility, breathwork, and mindful strength.</p>
+                    </article>
+
+                    <article class="staff-card">
+                        <div class="staff-avatar">DV</div>
+                        <h3>David Vance</h3>
+                        <p class="staff-role">Strength & Conditioning</p>
+                        <p class="staff-bio">Focuses on biomechanics, compound lifting, and hypertrophy.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Landmark (Flexbox) -->
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-col">
+                <a href="#home" class="logo">Pulse<span>Studio</span></a>
+                <p>Own your energy.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Location</h4>
+                <p>124 Fitness Blvd, Suite 100<br>Metropolis, NY 10001</p>
+            </div>
+            <div class="footer-col">
+                <h4>Hours</h4>
+                <p>Mon - Fri: 5:00 AM - 10:00 PM<br>Sat - Sun: 7:00 AM - 8:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 PulseStudio. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
