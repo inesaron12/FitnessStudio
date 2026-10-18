@@ -15,7 +15,7 @@ export function Contact() {
                     <p className="mt-1 text-xs text-muted">123 Energy Way, Metro City</p>
                 </div>
 
-                {/* Teléfono */}
+
                 <div className="flex flex-col items-center">
                     <span className="text-2xl text-accent">📞</span>
                     <h3 className="mt-2 font-bold text-main">Phone</h3>

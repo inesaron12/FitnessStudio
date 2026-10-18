@@ -1,6 +1,6 @@
 export function Home() {
     return (
-        <section id="hero" className="mx-auto max-w-[1100px] px-6 pt-20 pb-16">
+        <section id="home" className="mx-auto max-w-[1100px] px-6 pt-20 pb-16">
             <p className="mb-4 text-xs tracking-[0.15em] text-muted uppercase">
                 Elite training · Professional coaching
             </p>

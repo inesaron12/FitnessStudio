@@ -11,7 +11,7 @@ export function Staff() {
                 </p>
             </div>
 
-            {/* Cuadrícula de entrenadores */}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {trainers.map((trainer) => (
                     <TrainerCard key={trainer.id} trainer={trainer} />

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { BookmarkToggle } from './BookmarkToggle'
 
 export function ClassCard({ item }) {
-    // Estado local para el botón controlado (por ejemplo, si está guardada/favorita)
+
     const [isSaved, setIsSaved] = useState(false)
 
     return (
@@ -19,7 +19,7 @@ export function ClassCard({ item }) {
                         <p className="text-sm text-muted">{item.category}</p>
                     </div>
 
-                    {/* Tu componente controlado reutilizable */}
+
                     <BookmarkToggle
                         isBooked={isSaved}
                         onToggle={() => setIsSaved(!isSaved)}

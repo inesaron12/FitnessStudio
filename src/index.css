@@ -16,7 +16,6 @@ body {
   color: #f3f4f6;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
-  /* Vital para cumplir con el requisito de cero scroll horizontal */
   margin: 0;
   padding: 0;
 }

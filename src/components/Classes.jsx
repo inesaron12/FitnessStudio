@@ -17,7 +17,7 @@ export function Classes() {
             <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <h2 className="text-2xl font-bold text-main">Explore our classes</h2>
 
-                {/* Botones de filtro por categoría */}
+
                 <div className="flex flex-wrap gap-2">
                     {categories.map((cat) => (
                         <button
@@ -35,7 +35,7 @@ export function Classes() {
                 </div>
             </div>
 
-            {/* Cuadrícula de tarjetas filtradas */}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filtered.map((item) => (
                     <ClassCard key={item.id} item={item} />
