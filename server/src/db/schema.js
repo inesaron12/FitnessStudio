@@ -1,6 +1,55 @@
-import { pgTable, serial, text, decimal, integer, boolean, json } from 'drizzle-orm/pg-core'
+import { pgTable, serial, text, decimal, integer, boolean, json, timestamp } from 'drizzle-orm/pg-core'
 
-// 1. Classes table
+// --- 1. BETTER AUTH TABLES ---
+
+export const user = pgTable("user", {
+    id: text("id").primaryKey(),
+    name: text('name').notNull(),
+    email: text('email').notNull().unique(),
+    emailVerified: boolean('email_verified').notNull(),
+    image: text('image'),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at').notNull()
+});
+
+export const session = pgTable("session", {
+    id: text("id").primaryKey(),
+    expiresAt: timestamp('expires_at').notNull(),
+    token: text('token').notNull().unique(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at').notNull(),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    userId: text('user_id').notNull().references(() => user.id)
+});
+
+export const account = pgTable("account", {
+    id: text("id").primaryKey(),
+    accountId: text('account_id').notNull(),
+    providerId: text('provider_id').notNull(),
+    userId: text('user_id').notNull().references(() => user.id),
+    accessToken: text('access_token'),
+    refreshToken: text('refresh_token'),
+    idToken: text('id_token'),
+    accessTokenExpiresAt: timestamp('access_token_expires_at'),
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+    scope: text('scope'),
+    password: text('password'),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at').notNull()
+});
+
+export const verification = pgTable("verification", {
+    id: text("id").primaryKey(),
+    identifier: text('identifier').notNull(),
+    value: text('value').notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at')
+});
+
+// --- 2. PULSESTUDIO TABLES ---
+
 export const classes = pgTable('classes', {
     id: serial('id').primaryKey(),
     slug: text('slug').notNull().unique(),
@@ -11,7 +60,6 @@ export const classes = pgTable('classes', {
     description: text('description').notNull(),
 })
 
-// 2. Staff / Trainers table
 export const trainers = pgTable('trainers', {
     id: serial('id').primaryKey(),
     slug: text('slug').notNull().unique(),
@@ -21,29 +69,19 @@ export const trainers = pgTable('trainers', {
     bio: text('bio').notNull(),
 })
 
-// 3. Plans / Memberships table
 export const memberships = pgTable('memberships', {
     id: serial('id').primaryKey(),
-    slug: text('slug').notNull().unique(),             // e.g., 'basic', 'pro', 'vip'
-    name: text('name').notNull(),                     // e.g., 'Day Pass'
-    price: decimal('price', { precision: 10, scale: 2 }).notNull(), // e.g., 15.00
-    duration: text('duration').notNull(),             // e.g., 'per day', 'per month'
-    description: text('description').notNull(),
-    features: json('features').notNull(),             // Guardará la lista de características como JSON
-    popular: boolean('popular').default(false).notNull(), // Indica si es el plan destacado
-})
-
-// 4. Users table
-export const users = pgTable('users', {
-    id: serial('id').primaryKey(),
+    slug: text('slug').notNull().unique(),
     name: text('name').notNull(),
-    email: text('email').notNull().unique(),
-    password: text('password').notNull(),
+    price: decimal('price', { precision: 10, scale: 2 }).notNull(),
+    duration: text('duration').notNull(),
+    description: text('description').notNull(),
+    features: json('features').notNull(),
+    popular: boolean('popular').default(false).notNull(),
 })
 
-// 5. Bookings table
 export const bookings = pgTable('bookings', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').references(() => users.id).notNull(),
+    userId: text('user_id').references(() => user.id).notNull(), // Vinculado al id de texto de Better Auth
     classId: integer('class_id').references(() => classes.id).notNull(),
 })
