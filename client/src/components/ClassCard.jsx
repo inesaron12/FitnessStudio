@@ -1,9 +1,37 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
+import { useSession } from '../lib/auth'
 import { BookmarkToggle } from './BookmarkToggle'
 
 export function ClassCard({ item }) {
+    const navigate = useNavigate()
+    // Fetch active session to check user authentication status
+    const { data: session } = useSession()
 
     const [isSaved, setIsSaved] = useState(false)
+
+    // Handle class booking action
+    const handleBookSpot = () => {
+        if (!session) {
+            // Redirect to login if user is not authenticated
+            navigate('/login')
+        } else {
+            // Proceed with booking action
+            console.log('Booking spot for class:', item.id)
+            // TODO: Implement booking API request
+        }
+    }
+
+    // Handle bookmark / favorite toggle action
+    const handleToggleBookmark = () => {
+        if (!session) {
+            // Redirect to login if user is not authenticated
+            navigate('/login')
+        } else {
+            // Toggle bookmark state if authenticated
+            setIsSaved(!isSaved)
+        }
+    }
 
     return (
         <article className="overflow-hidden rounded-2xl border border-border bg-card transition hover:border-accent">
@@ -19,10 +47,9 @@ export function ClassCard({ item }) {
                         <p className="text-sm text-muted">{item.category}</p>
                     </div>
 
-
                     <BookmarkToggle
                         isBooked={isSaved}
-                        onToggle={() => setIsSaved(!isSaved)}
+                        onToggle={handleToggleBookmark}
                     />
                 </div>
 
@@ -32,7 +59,11 @@ export function ClassCard({ item }) {
                     <span className="text-xs font-semibold uppercase tracking-wider text-accent">
                         {item.intensity || 'All Levels'}
                     </span>
-                    <button className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#e03232]">
+                    <button
+                        type="button"
+                        onClick={handleBookSpot}
+                        className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#e03232] cursor-pointer"
+                    >
                         Book Spot
                     </button>
                 </div>

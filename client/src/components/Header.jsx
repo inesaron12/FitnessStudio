@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router' // Use 'react-router-dom' if you installed that package instead
 import { useSession, signOut } from '../lib/auth'
 
 const navLinks = [
@@ -9,11 +10,13 @@ const navLinks = [
     { name: 'Contact', href: '#contact' },
 ]
 
-export function Header({ onOpenLogin }) {
+export function Header() {
     const [isOpen, setIsOpen] = useState(false)
+
     // Fetch active user session from Better Auth
     const { data: session, isPending } = useSession()
 
+    // Handle user sign out process
     const handleSignOut = async () => {
         await signOut({
             fetchOptions: {
@@ -62,12 +65,20 @@ export function Header({ onOpenLogin }) {
                                     </button>
                                 </div>
                             ) : (
-                                <button
-                                    onClick={onOpenLogin}
-                                    className="rounded-xl bg-accent px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90 cursor-pointer"
-                                >
-                                    Sign In
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <Link
+                                        to="/login"
+                                        className="rounded-xl px-4 py-2 text-xs font-semibold text-main transition hover:text-accent"
+                                    >
+                                        Sign In
+                                    </Link>
+                                    <Link
+                                        to="/signup"
+                                        className="rounded-xl bg-accent px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </div>
                             )}
                         </>
                     )}
@@ -117,15 +128,22 @@ export function Header({ onOpenLogin }) {
                                         </button>
                                     </div>
                                 ) : (
-                                    <button
-                                        onClick={() => {
-                                            setIsOpen(false)
-                                            if (onOpenLogin) onOpenLogin()
-                                        }}
-                                        className="mt-2 inline-block rounded-xl bg-accent px-4 py-2 text-center text-xs font-semibold text-white cursor-pointer"
-                                    >
-                                        Sign In
-                                    </button>
+                                    <div className="mt-2 flex flex-col gap-2 pt-2 border-t border-border">
+                                        <Link
+                                            to="/login"
+                                            onClick={() => setIsOpen(false)}
+                                            className="w-full rounded-xl border border-border py-2 text-center text-xs font-semibold text-main"
+                                        >
+                                            Sign In
+                                        </Link>
+                                        <Link
+                                            to="/signup"
+                                            onClick={() => setIsOpen(false)}
+                                            className="w-full rounded-xl bg-accent py-2 text-center text-xs font-semibold text-white"
+                                        >
+                                            Sign Up
+                                        </Link>
+                                    </div>
                                 )}
                             </>
                         )}

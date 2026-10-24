@@ -1,6 +1,24 @@
+import { useNavigate } from 'react-router'
+import { useSession } from '../lib/auth'
 import { formatPrice } from '../lib/format'
 
 export function MembershipCard({ plan }) {
+    const navigate = useNavigate()
+    // Fetch active user session to check authentication status
+    const { data: session } = useSession()
+
+    // Handle plan selection action based on auth state
+    const handleChoosePlan = () => {
+        if (!session) {
+            // Redirect user to login if not authenticated
+            navigate('/login')
+        } else {
+            // Proceed with plan subscription or checkout logic
+            console.log('Selected plan ID:', plan.id)
+            // TODO: Implement subscription API call or redirect to checkout
+        }
+    }
+
     return (
         <article
             className={`relative flex flex-col justify-between rounded-2xl border p-6 transition ${plan.popular
@@ -37,6 +55,7 @@ export function MembershipCard({ plan }) {
 
             <button
                 type="button"
+                onClick={handleChoosePlan}
                 className={`mt-8 w-full rounded-full py-2.5 text-sm font-semibold transition cursor-pointer ${plan.popular
                     ? 'bg-accent text-white hover:bg-[#e03232]'
                     : 'border border-border text-main hover:border-accent hover:text-accent'
