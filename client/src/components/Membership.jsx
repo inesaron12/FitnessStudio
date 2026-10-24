@@ -1,7 +1,38 @@
-import { plans } from '../data/plans'
+import { useState, useEffect } from 'react'
 import { MembershipCard } from './MembershipCard'
 
 export function Membership() {
+    const [plans, setPlans] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    useEffect(() => {
+        // Fetch membership plans from the backend API
+        fetch('/api/memberships')
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to fetch memberships')
+                return res.json()
+            })
+            .then((data) => {
+                setPlans(data)
+                setLoading(false)
+            })
+            .catch((err) => {
+                setError(err.message)
+                setLoading(false)
+            })
+    }, [])
+
+    // Show loading state while fetching data
+    if (loading) {
+        return <div className="text-center py-12 text-muted">Loading memberships...</div>
+    }
+
+    // Show error state if something goes wrong
+    if (error) {
+        return <div className="text-center py-12 text-red-500">Error: {error}</div>
+    }
+
     return (
         <section id="membership" className="mx-auto max-w-[1100px] px-6 py-12">
             <div className="mb-10 text-center">

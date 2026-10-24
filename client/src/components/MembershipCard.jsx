@@ -1,3 +1,5 @@
+import { formatPrice } from '../lib/format'
+
 export function MembershipCard({ plan }) {
     return (
         <article
@@ -17,8 +19,10 @@ export function MembershipCard({ plan }) {
                 <p className="mt-2 text-sm text-muted">{plan.description}</p>
 
                 <div className="mt-6 flex items-baseline gap-1">
-                    <span className="text-4xl font-extrabold text-main">${plan.price}</span>
-                    <span className="text-sm font-medium text-muted">/{plan.period}</span>
+                    <span className="text-4xl font-extrabold text-main">
+                        {formatPrice(plan.price)}
+                    </span>
+                    <span className="text-sm font-medium text-muted">/{plan.duration}</span>
                 </div>
 
                 <ul className="mt-6 space-y-3 text-sm text-muted">
