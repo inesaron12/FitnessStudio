@@ -1,100 +1,141 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
-import { formatPrice } from '../lib/format'
+import { BookmarkToggle } from './BookmarkToggle'
 
-// 1. Definimos la URL de la API limpiando cualquier slash al final
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
-
-export function MembershipCard({ plan }) {
+export function ClassCard({ item }) {
     const navigate = useNavigate()
-    // Fetch active user session to check authentication status
     const { data: session } = useSession()
 
-    const [isLoading, setIsLoading] = useState(false)
+    const [isSaved, setIsSaved] = useState(false)
+    const [isBooking, setIsBooking] = useState(false)
 
-    // Handle plan selection action by sending a request to the backend API
-    const handleChoosePlan = async () => {
+    // 1. Cargar el estado de favorito desde el backend al iniciar sesión
+    useEffect(() => {
         if (!session) {
-            // Redirect user to login if not authenticated
+            setIsSaved(false)
+            return
+        }
+
+        const fetchBookmarkStatus = async () => {
+            try {
+                // Pide al backend las clases guardadas del usuario usando ruta relativa y cookies
+                const response = await fetch('/api/bookmarks', {
+                    credentials: 'include',
+                })
+                if (response.ok) {
+                    const bookmarks = await response.json()
+                    // Verificamos si esta clase está en la lista de favoritos del usuario
+                    const isBookmarked = bookmarks.some(
+                        (b) => b.classId === item.id || b.id === item.id
+                    )
+                    setIsSaved(isBookmarked)
+                }
+            } catch (err) {
+                console.error('Error fetching bookmark status:', err)
+            }
+        }
+
+        fetchBookmarkStatus()
+    }, [session, item.id])
+
+    // Manejar la reserva de la clase (usando ruta relativa)
+    const handleBookSpot = async () => {
+        if (!session) {
             navigate('/login')
             return
         }
 
         try {
-            setIsLoading(true)
-
-            // 2. Usamos la variable API_URL aquí en lugar de localhost
-            const response = await fetch(`${API_URL}/api/memberships/select`, {
+            setIsBooking(true)
+            const response = await fetch('/api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // Crucial for sending Better Auth session cookies
-                body: JSON.stringify({ planId: plan.id }),
+                credentials: 'include',
+                body: JSON.stringify({ classId: item.id }),
             })
 
             if (response.ok) {
-                alert('Membership plan selected successfully!')
-                navigate('/') // Redirect to home page after successful selection
+                alert('Spot booked successfully!')
             } else {
                 const errorData = await response.json()
-                console.error('Failed to select plan:', errorData)
-                alert(errorData.error || 'Failed to select plan. Please try again.')
+                alert(errorData.error || 'Failed to book spot. Please try again.')
             }
         } catch (err) {
-            console.error('Network error during plan selection:', err)
+            console.error('Network error during booking:', err)
             alert('Network error. Please check your connection.')
         } finally {
-            setIsLoading(false)
+            setIsBooking(false)
+        }
+    }
+
+    // 2. Sincronizar el cambio de favorito con el backend
+    const handleToggleBookmark = async () => {
+        if (!session) {
+            navigate('/login')
+            return
+        }
+
+        try {
+            const method = isSaved ? 'DELETE' : 'POST'
+            const response = await fetch('/api/bookmarks', {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ classId: item.id }),
+            })
+
+            if (response.ok) {
+                setIsSaved(!isSaved) // Invertimos el estado visual solo si el backend responde con éxito
+            } else {
+                const errorData = await response.json()
+                alert(errorData.error || 'Could updating bookmark.')
+            }
+        } catch (err) {
+            console.error('Network error during bookmark toggle:', err)
         }
     }
 
     return (
-        <article
-            className={`relative flex flex-col justify-between rounded-2xl border p-6 transition ${plan.popular
-                ? 'border-accent bg-card shadow-lg shadow-accent/10'
-                : 'border-border bg-card/60 hover:border-accent/50'
-                }`}
-        >
-            {plan.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
-                    Most Popular
-                </span>
-            )}
+        <article className="overflow-hidden rounded-2xl border border-border bg-card transition hover:border-accent">
+            <img
+                src={item.image}
+                alt={item.name}
+                className="h-[180px] w-full object-cover"
+            />
+            <div className="p-4">
+                <div className="flex items-start justify-between gap-2">
+                    <div>
+                        <h3 className="font-semibold text-main">{item.name}</h3>
+                        <p className="text-sm text-muted">{item.category}</p>
+                    </div>
 
-            <div>
-                <h3 className="text-xl font-bold text-main">{plan.name}</h3>
-                <p className="mt-2 text-sm text-muted">{plan.description}</p>
-
-                <div className="mt-6 flex items-baseline gap-1">
-                    <span className="text-4xl font-extrabold text-main">
-                        {formatPrice(plan.price)}
-                    </span>
-                    <span className="text-sm font-medium text-muted">/{plan.duration}</span>
+                    <BookmarkToggle
+                        isBooked={isSaved}
+                        onToggle={handleToggleBookmark}
+                    />
                 </div>
 
-                <ul className="mt-6 space-y-3 text-sm text-muted">
-                    {plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
-                            <span className="text-accent font-bold">✓</span>
-                            <span>{feature}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+                <p className="mt-2 text-sm text-muted">{item.description}</p>
 
-            <button
-                type="button"
-                onClick={handleChoosePlan}
-                disabled={isLoading}
-                className={`mt-8 w-full rounded-full py-2.5 text-sm font-semibold transition cursor-pointer disabled:opacity-50 ${plan.popular
-                    ? 'bg-accent text-white hover:bg-[#e03232]'
-                    : 'border border-border text-main hover:border-accent hover:text-accent'
-                    }`}
-            >
-                {isLoading ? 'Processing...' : 'Choose Plan'}
-            </button>
+                <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                        {item.intensity || 'All Levels'}
+                    </span>
+                    <button
+                        type="button"
+                        onClick={handleBookSpot}
+                        disabled={isBooking}
+                        className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#e03232] cursor-pointer disabled:opacity-50"
+                    >
+                        {isBooking ? 'Booking...' : 'Book Spot'}
+                    </button>
+                </div>
+            </div>
         </article>
     )
 }

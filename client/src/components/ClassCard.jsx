@@ -1,37 +1,59 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { BookmarkToggle } from './BookmarkToggle'
 
-// 1. Definimos la URL de la API limpiando cualquier slash al final
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
-
 export function ClassCard({ item }) {
     const navigate = useNavigate()
-    // Fetch active session to check user authentication status
     const { data: session } = useSession()
 
     const [isSaved, setIsSaved] = useState(false)
     const [isBooking, setIsBooking] = useState(false)
 
-    // Handle class booking action by sending a request to the backend API
+    // 1. Cargar el estado de favorito desde el backend al iniciar sesión
+    useEffect(() => {
+        if (!session) {
+            setIsSaved(false)
+            return
+        }
+
+        const fetchBookmarkStatus = async () => {
+            try {
+                // Pide al backend las clases guardadas del usuario usando ruta relativa y cookies
+                const response = await fetch('/api/bookmarks', {
+                    credentials: 'include',
+                })
+                if (response.ok) {
+                    const bookmarks = await response.json()
+                    // Verificamos si esta clase está en la lista de favoritos del usuario
+                    const isBookmarked = bookmarks.some(
+                        (b) => b.classId === item.id || b.id === item.id
+                    )
+                    setIsSaved(isBookmarked)
+                }
+            } catch (err) {
+                console.error('Error fetching bookmark status:', err)
+            }
+        }
+
+        fetchBookmarkStatus()
+    }, [session, item.id])
+
+    // Manejar la reserva de la clase (usando ruta relativa)
     const handleBookSpot = async () => {
         if (!session) {
-            // Redirect to login if the user is not authenticated
             navigate('/login')
             return
         }
 
         try {
             setIsBooking(true)
-
-            // 2. Usamos la variable API_URL aquí en lugar de localhost
-            const response = await fetch(`${API_URL}/api/bookings`, {
+            const response = await fetch('/api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // Crucial for sending Better Auth session cookies
+                credentials: 'include',
                 body: JSON.stringify({ classId: item.id }),
             })
 
@@ -39,7 +61,6 @@ export function ClassCard({ item }) {
                 alert('Spot booked successfully!')
             } else {
                 const errorData = await response.json()
-                console.error('Failed to book spot:', errorData)
                 alert(errorData.error || 'Failed to book spot. Please try again.')
             }
         } catch (err) {
@@ -50,14 +71,32 @@ export function ClassCard({ item }) {
         }
     }
 
-    // Handle bookmark / favorite toggle action
-    const handleToggleBookmark = () => {
+    // 2. Sincronizar el cambio de favorito con el backend
+    const handleToggleBookmark = async () => {
         if (!session) {
-            // Redirect to login if user is not authenticated
             navigate('/login')
-        } else {
-            // Toggle bookmark state if authenticated
-            setIsSaved(!isSaved)
+            return
+        }
+
+        try {
+            const method = isSaved ? 'DELETE' : 'POST'
+            const response = await fetch('/api/bookmarks', {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ classId: item.id }),
+            })
+
+            if (response.ok) {
+                setIsSaved(!isSaved) // Invertimos el estado visual solo si el backend responde con éxito
+            } else {
+                const errorData = await response.json()
+                alert(errorData.error || 'Could updating bookmark.')
+            }
+        } catch (err) {
+            console.error('Network error during bookmark toggle:', err)
         }
     }
 

@@ -1,12 +1,14 @@
-// src/lib/auth.js
 import { createAuthClient } from 'better-auth/react'
 
 /**
  * Better Auth client configuration for React.
- * Uses relative path to leverage Vercel rewrites pointing to Render.
+ * Connected directly to Render backend to ensure cookie and session stability.
  */
 export const authClient = createAuthClient({
-    baseURL: '', // Al estar vacío, usa el dominio actual y el vercel.json redirige /api/... a Render
+    baseURL: 'https://pulsestudio.onrender.com', // Apuntamos directamente al backend en Render
+    fetchOptions: {
+        credentials: 'include', // Imprescindible para que el navegador acepte y envíe las cookies de sesión
+    },
 })
 
 // Export helper hooks and auth functions
