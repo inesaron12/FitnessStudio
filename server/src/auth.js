@@ -3,6 +3,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from '@better-auth/drizzle-adapter'
 import { db } from './db/index.js'
 import * as schema from './db/schema.js'
+
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: 'pg',
@@ -27,8 +28,8 @@ export const auth = betterAuth({
     trustedOrigins: [process.env.CLIENT_URL ?? 'http://localhost:5173'],
     advanced: {
         defaultCookieAttributes: {
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none',
+            secure: true,
         },
     },
 })
