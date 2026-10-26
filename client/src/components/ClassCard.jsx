@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { BookmarkToggle } from './BookmarkToggle'
 
+const BACKEND_URL = 'https://pulsestudio.onrender.com'
+
 export function ClassCard({ item }) {
     const navigate = useNavigate()
     const { data: session } = useSession()
@@ -19,13 +21,11 @@ export function ClassCard({ item }) {
 
         const fetchBookmarkStatus = async () => {
             try {
-                // Pide al backend las clases guardadas del usuario usando ruta relativa y cookies
-                const response = await fetch('/api/bookmarks', {
+                const response = await fetch(`${BACKEND_URL}/api/bookmarks`, {
                     credentials: 'include',
                 })
                 if (response.ok) {
                     const bookmarks = await response.json()
-                    // Verificamos si esta clase está en la lista de favoritos del usuario
                     const isBookmarked = bookmarks.some(
                         (b) => b.classId === item.id || b.id === item.id
                     )
@@ -39,7 +39,7 @@ export function ClassCard({ item }) {
         fetchBookmarkStatus()
     }, [session, item.id])
 
-    // Manejar la reserva de la clase (usando ruta relativa)
+    // Manejar la reserva de la clase conectando directamente a Render
     const handleBookSpot = async () => {
         if (!session) {
             navigate('/login')
@@ -48,7 +48,7 @@ export function ClassCard({ item }) {
 
         try {
             setIsBooking(true)
-            const response = await fetch('/api/bookings', {
+            const response = await fetch(`${BACKEND_URL}/api/bookings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export function ClassCard({ item }) {
         }
     }
 
-    // 2. Sincronizar el cambio de favorito con el backend
+    // 2. Sincronizar el cambio de favorito con el backend de Render
     const handleToggleBookmark = async () => {
         if (!session) {
             navigate('/login')
@@ -80,7 +80,7 @@ export function ClassCard({ item }) {
 
         try {
             const method = isSaved ? 'DELETE' : 'POST'
-            const response = await fetch('/api/bookmarks', {
+            const response = await fetch(`${BACKEND_URL}/api/bookmarks`, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,10 +90,10 @@ export function ClassCard({ item }) {
             })
 
             if (response.ok) {
-                setIsSaved(!isSaved) // Invertimos el estado visual solo si el backend responde con éxito
+                setIsSaved(!isSaved)
             } else {
                 const errorData = await response.json()
-                alert(errorData.error || 'Could updating bookmark.')
+                alert(errorData.error || 'Could not update bookmark.')
             }
         } catch (err) {
             console.error('Network error during bookmark toggle:', err)

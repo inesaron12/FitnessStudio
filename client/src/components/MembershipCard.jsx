@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { formatPrice } from '../lib/format'
 
+const BACKEND_URL = 'https://pulsestudio.onrender.com'
+
 export function MembershipCard({ plan }) {
     const navigate = useNavigate()
     // Fetch active user session to check authentication status
@@ -10,7 +12,7 @@ export function MembershipCard({ plan }) {
 
     const [isLoading, setIsLoading] = useState(false)
 
-    // Handle plan selection action by sending a request to the backend API
+    // Handle plan selection action by sending a request directly to Render backend
     const handleChoosePlan = async () => {
         if (!session) {
             // Redirect user to login if not authenticated
@@ -21,8 +23,7 @@ export function MembershipCard({ plan }) {
         try {
             setIsLoading(true)
 
-            // Ruta ajustada al endpoint /api/memberships
-            const response = await fetch('/api/memberships', {
+            const response = await fetch(`${BACKEND_URL}/api/memberships`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

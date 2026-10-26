@@ -83,7 +83,7 @@ export const memberships = pgTable('memberships', {
 export const bookings = pgTable('bookings', {
     id: serial('id').primaryKey(),
     userId: text('user_id').notNull(),
-    classId: text('class_id').notNull(),
+    classId: integer('class_id').notNull(),
     createdAt: timestamp('created_at').defaultNow(),
 })
 
