@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { formatPrice } from '../lib/format'
@@ -7,15 +8,42 @@ export function MembershipCard({ plan }) {
     // Fetch active user session to check authentication status
     const { data: session } = useSession()
 
-    // Handle plan selection action based on auth state
-    const handleChoosePlan = () => {
+    const [isLoading, setIsLoading] = useState(false)
+
+    // Handle plan selection action by sending a request to the backend API
+    const handleChoosePlan = async () => {
         if (!session) {
             // Redirect user to login if not authenticated
             navigate('/login')
-        } else {
-            // Proceed with plan subscription or checkout logic
-            console.log('Selected plan ID:', plan.id)
-            // TODO: Implement subscription API call or redirect to checkout
+            return
+        }
+
+        try {
+            setIsLoading(true)
+
+            // Send POST request to the server with the membership plan ID
+            const response = await fetch('http://localhost:3000/api/memberships/select', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Crucial for sending Better Auth session cookies
+                body: JSON.stringify({ planId: plan.id }),
+            })
+
+            if (response.ok) {
+                alert('Membership plan selected successfully!')
+                navigate('/') // Redirect to home page after successful selection
+            } else {
+                const errorData = await response.json()
+                console.error('Failed to select plan:', errorData)
+                alert(errorData.error || 'Failed to select plan. Please try again.')
+            }
+        } catch (err) {
+            console.error('Network error during plan selection:', err)
+            alert('Network error. Please check your connection.')
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -56,12 +84,13 @@ export function MembershipCard({ plan }) {
             <button
                 type="button"
                 onClick={handleChoosePlan}
-                className={`mt-8 w-full rounded-full py-2.5 text-sm font-semibold transition cursor-pointer ${plan.popular
+                disabled={isLoading}
+                className={`mt-8 w-full rounded-full py-2.5 text-sm font-semibold transition cursor-pointer disabled:opacity-50 ${plan.popular
                     ? 'bg-accent text-white hover:bg-[#e03232]'
                     : 'border border-border text-main hover:border-accent hover:text-accent'
                     }`}
             >
-                Choose Plan
+                {isLoading ? 'Processing...' : 'Choose Plan'}
             </button>
         </article>
     )

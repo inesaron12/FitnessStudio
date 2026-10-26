@@ -9,16 +9,41 @@ export function ClassCard({ item }) {
     const { data: session } = useSession()
 
     const [isSaved, setIsSaved] = useState(false)
+    const [isBooking, setIsBooking] = useState(false)
 
-    // Handle class booking action
-    const handleBookSpot = () => {
+    // Handle class booking action by sending a request to the backend API
+    const handleBookSpot = async () => {
         if (!session) {
-            // Redirect to login if user is not authenticated
+            // Redirect to login if the user is not authenticated
             navigate('/login')
-        } else {
-            // Proceed with booking action
-            console.log('Booking spot for class:', item.id)
-            // TODO: Implement booking API request
+            return
+        }
+
+        try {
+            setIsBooking(true)
+
+            // Send POST request to the server with the class ID
+            const response = await fetch('http://localhost:3000/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Crucial for sending Better Auth session cookies
+                body: JSON.stringify({ classId: item.id }),
+            })
+
+            if (response.ok) {
+                alert('Spot booked successfully!')
+            } else {
+                const errorData = await response.json()
+                console.error('Failed to book spot:', errorData)
+                alert(errorData.error || 'Failed to book spot. Please try again.')
+            }
+        } catch (err) {
+            console.error('Network error during booking:', err)
+            alert('Network error. Please check your connection.')
+        } finally {
+            setIsBooking(false)
         }
     }
 
@@ -62,9 +87,10 @@ export function ClassCard({ item }) {
                     <button
                         type="button"
                         onClick={handleBookSpot}
-                        className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#e03232] cursor-pointer"
+                        disabled={isBooking}
+                        className="rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#e03232] cursor-pointer disabled:opacity-50"
                     >
-                        Book Spot
+                        {isBooking ? 'Booking...' : 'Book Spot'}
                     </button>
                 </div>
             </div>

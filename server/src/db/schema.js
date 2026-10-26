@@ -82,6 +82,7 @@ export const memberships = pgTable('memberships', {
 
 export const bookings = pgTable('bookings', {
     id: serial('id').primaryKey(),
-    userId: text('user_id').references(() => user.id).notNull(), // Vinculado al id de texto de Better Auth
-    classId: integer('class_id').references(() => classes.id).notNull(),
+    userId: text('user_id').notNull(),
+    classId: text('class_id').notNull(),
+    createdAt: timestamp('created_at').defaultNow(),
 })

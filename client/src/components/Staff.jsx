@@ -1,7 +1,25 @@
-import { trainers } from '../data/trainers'
+import { useState, useEffect } from 'react'
 import { TrainerCard } from './TrainerCard'
 
 export function Staff() {
+    // State to store trainers fetched from the backend API
+    const [trainers, setTrainers] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    // Fetch trainers from backend on component mount
+    useEffect(() => {
+        fetch('http://localhost:3000/api/trainers')
+            .then((res) => res.json())
+            .then((data) => {
+                setTrainers(data)
+                setIsLoading(false)
+            })
+            .catch((err) => {
+                console.error('Error fetching trainers:', err)
+                setIsLoading(false)
+            })
+    }, [])
+
     return (
         <section id="staff" className="mx-auto max-w-[1100px] px-6 py-12">
             <div className="mb-8">
@@ -11,12 +29,15 @@ export function Staff() {
                 </p>
             </div>
 
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {trainers.map((trainer) => (
-                    <TrainerCard key={trainer.id} trainer={trainer} />
-                ))}
-            </div>
+            {isLoading ? (
+                <p className="text-center py-12 text-muted">Loading staff...</p>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {trainers.map((trainer) => (
+                        <TrainerCard key={trainer.id} trainer={trainer} />
+                    ))}
+                </div>
+            )}
         </section>
     )
 }
