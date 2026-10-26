@@ -15,7 +15,8 @@ export const auth = betterAuth({
         },
     }),
     secret: process.env.BETTER_AUTH_SECRET,
-    baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
+    // Asegura que use tu URL de Render en producción
+    baseURL: process.env.BETTER_AUTH_URL || 'https://pulsestudio.onrender.com',
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
@@ -25,7 +26,13 @@ export const auth = betterAuth({
         expiresIn: 60 * 60 * 24 * 7,
         updateAge: 60 * 60 * 24,
     },
-    trustedOrigins: [process.env.CLIENT_URL ?? 'http://localhost:5173'],
+
+    trustedOrigins: [
+        process.env.CLIENT_URL,
+        'https://fitness-studio-git-main-ines-464f.vercel.app',
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ].filter(Boolean),
     advanced: {
         defaultCookieAttributes: {
             sameSite: 'none',
