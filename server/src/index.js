@@ -10,11 +10,24 @@ import membershipsRouter from './routes/memberships.js'
 const app = express()
 
 // Middlewares
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    "https://fitness-studio-git-main-ines-464f.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000"
+].filter(Boolean); // Filtra valores undefined si CLIENT_URL no está definida
+
 app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+        // Permitir solicitudes sin origen (como Postman o curl)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 }))
-app.use(express.json())
 
 // --- BETTER AUTH ENDPOINT ---
 app.all(/^\/api\/auth/, toNodeHandler(auth))
