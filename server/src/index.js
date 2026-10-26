@@ -8,6 +8,7 @@ import { toNodeHandler, fromNodeHeaders } from "better-auth/node"
 import membershipsRouter from './routes/memberships.js'
 
 const app = express()
+app.set("trust proxy", 1)
 
 // Middlewares
 const allowedOrigins = [
