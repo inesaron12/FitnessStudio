@@ -3,10 +3,10 @@ import { createAuthClient } from 'better-auth/react'
 
 /**
  * Better Auth client configuration for React.
- * Uses the proxy path or explicit backend base URL.
+ * Uses relative path to leverage Vercel rewrites pointing to Render.
  */
 export const authClient = createAuthClient({
-    baseURL: import.meta.env.VITE_AUTH_URL || 'http://localhost:3000',
+    baseURL: '', // Al estar vacío, usa el dominio actual y el vercel.json redirige /api/... a Render
 })
 
 // Export helper hooks and auth functions
