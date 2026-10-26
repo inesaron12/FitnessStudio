@@ -23,13 +23,14 @@ export function MembershipCard({ plan }) {
         try {
             setIsLoading(true)
 
-            const response = await fetch(`${BACKEND_URL}/api/memberships`, {
+            // 👈 CORREGIDO: Añadido '/select' y cambiado a 'planId' para que coincida con el backend
+            const response = await fetch(`${BACKEND_URL}/api/memberships/select`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include', // Crucial for sending Better Auth session cookies
-                body: JSON.stringify({ membershipId: plan.id }),
+                body: JSON.stringify({ planId: plan.id }),
             })
 
             if (response.ok) {
