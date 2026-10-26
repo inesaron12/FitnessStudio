@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { ClassCard } from './ClassCard'
 
+// Use VITE_API_URL in production (Render) or fallback to localhost during development
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 const categories = ['All', 'HIIT', 'Yoga', 'Strength']
 
 export function Classes() {
@@ -11,7 +14,7 @@ export function Classes() {
 
     // Fetch classes from backend on component mount
     useEffect(() => {
-        fetch('http://localhost:3000/api/classes')
+        fetch(`${API_URL}/api/classes`) // 👈 Usamos la variable aquí
             .then((res) => res.json())
             .then((data) => {
                 setClassesList(data)

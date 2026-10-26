@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { TrainerCard } from './TrainerCard'
 
+// Dynamic API URL: points to Render in production (Vercel) or localhost in development
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 export function Staff() {
     // State to store trainers fetched from the backend API
     const [trainers, setTrainers] = useState([])
@@ -8,7 +11,7 @@ export function Staff() {
 
     // Fetch trainers from backend on component mount
     useEffect(() => {
-        fetch('http://localhost:3000/api/trainers')
+        fetch(`${API_URL}/api/trainers`)
             .then((res) => res.json())
             .then((data) => {
                 setTrainers(data)

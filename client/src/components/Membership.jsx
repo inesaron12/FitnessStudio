@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react'
 import { MembershipCard } from './MembershipCard'
 
+// Use VITE_API_URL in production (Render) or fallback to localhost during development
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 export function Membership() {
     const [plans, setPlans] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        // Fetch membership plans from the backend API
-        fetch('/api/memberships')
+        // Fetch membership plans from the backend API using API_URL
+        fetch(`${API_URL}/api/memberships`)
             .then((res) => {
                 if (!res.ok) throw new Error('Failed to fetch memberships')
                 return res.json()
