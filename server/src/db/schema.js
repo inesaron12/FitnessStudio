@@ -86,3 +86,10 @@ export const bookings = pgTable('bookings', {
     classId: text('class_id').notNull(),
     createdAt: timestamp('created_at').defaultNow(),
 })
+
+export const bookmarks = pgTable("bookmarks", {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull(),
+    classId: integer("class_id").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+})
