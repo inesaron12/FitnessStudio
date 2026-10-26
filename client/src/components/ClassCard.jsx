@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { BookmarkToggle } from './BookmarkToggle'
 
+// 1. Definimos la URL de la API limpiando cualquier slash al final
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
+
 export function ClassCard({ item }) {
     const navigate = useNavigate()
     // Fetch active session to check user authentication status
@@ -22,8 +25,8 @@ export function ClassCard({ item }) {
         try {
             setIsBooking(true)
 
-            // Send POST request to the server with the class ID
-            const response = await fetch('http://localhost:3000/api/bookings', {
+            // 2. Usamos la variable API_URL aquí en lugar de localhost
+            const response = await fetch(`${API_URL}/api/bookings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

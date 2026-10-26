@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { formatPrice } from '../lib/format'
 
+// 1. Definimos la URL de la API limpiando cualquier slash al final
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
+
 export function MembershipCard({ plan }) {
     const navigate = useNavigate()
     // Fetch active user session to check authentication status
@@ -21,8 +24,8 @@ export function MembershipCard({ plan }) {
         try {
             setIsLoading(true)
 
-            // Send POST request to the server with the membership plan ID
-            const response = await fetch('http://localhost:3000/api/memberships/select', {
+            // 2. Usamos la variable API_URL aquí en lugar de localhost
+            const response = await fetch(`${API_URL}/api/memberships/select`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
