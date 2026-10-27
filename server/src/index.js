@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }))
 // Middlewares
 const allowedOrigins = [
     process.env.CLIENT_URL,
+    "https://fitness-studio-zeta.vercel.app",
     "https://fitness-studio-git-main-ines-464f.vercel.app",
     "http://localhost:5173",
     "http://localhost:3000"
