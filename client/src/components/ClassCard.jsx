@@ -27,7 +27,7 @@ export function ClassCard({ item }) {
                 if (response.ok) {
                     const bookmarks = await response.json()
                     const isBookmarked = bookmarks.some(
-                        (b) => b.classId === item.id || b.id === item.id
+                        (b) => b.classId === item.id
                     )
                     setIsSaved(isBookmarked)
                 }
