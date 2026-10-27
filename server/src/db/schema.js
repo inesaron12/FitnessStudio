@@ -83,13 +83,29 @@ export const memberships = pgTable('memberships', {
 export const bookings = pgTable('bookings', {
     id: serial('id').primaryKey(),
     userId: text('user_id').notNull(),
-    classId: integer('class_id').notNull(),
+    classId: text('class_id').notNull(),
     createdAt: timestamp('created_at').defaultNow(),
 })
 
 export const bookmarks = pgTable("bookmarks", {
     id: serial("id").primaryKey(),
     userId: text("user_id").notNull(),
-    classId: integer("class_id").notNull(),
+    classId: text("class_id").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export const orders = pgTable('orders', {
+    id: text('id').primaryKey(), // ID de la sesión de Stripe o UUID
+    userId: text('user_id').notNull(),
+    status: text('status').notNull().default('pending'), // 'pending', 'paid', 'failed'
+    amountTotal: decimal('amount_total', { precision: 10, scale: 2 }).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const orderItems = pgTable('order_items', {
+    id: text('id').primaryKey(),
+    orderId: text('order_id').notNull().references(() => orders.id),
+    membershipId: text('membership_id').notNull(),
+    quantity: integer('quantity').notNull().default(1),
+    price: decimal('price', { precision: 10, scale: 2 }).notNull(),
 })
