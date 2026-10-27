@@ -1,30 +1,62 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import Stripe from 'stripe'
 import { db } from './db/index.js'
-import { classes, trainers, bookings, bookmarks } from './db/schema.js' // 👈 Añadido 'bookmarks' aquí
+import { classes, trainers, bookings, bookmarks, orders } from './db/schema.js'
 import { auth } from './auth.js'
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node"
 import membershipsRouter from './routes/memberships.js'
-import { eq, and } from 'drizzle-orm' // 👈 Importante para las consultas de favoritos
+import { eq, and } from 'drizzle-orm'
 
+// 1. Inicializar Express y Stripe primero
 const app = express()
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+
 app.set("trust proxy", 1)
+
+// 2. Stripe Webhook (Debe ir antes de express.json y express.urlencoded)
+app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    const sig = req.headers['stripe-signature']
+    let event
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
+    } catch (err) {
+        console.error(`Webhook signature verification failed: ${err.message}`)
+        return res.status(400).send(`Webhook Error: ${err.message}`)
+    }
+
+    // Cuando el pago se completa con éxito en Stripe
+    if (event.type === 'checkout.session.completed') {
+        const stripeSession = event.data.object
+
+        // Actualizamos la orden a 'paid' en la base de datos de Neon
+        await db.update(orders)
+            .set({ status: 'paid' })
+            .where(eq(orders.id, stripeSession.id))
+
+        console.log(`✅ Orden ${stripeSession.id} marcada como PAGADA con éxito.`)
+    }
+
+    res.json({ received: true })
+})
+
+// 3. Middlewares globales de JSON y URL encoded
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Middlewares
+// Middlewares de CORS
 const allowedOrigins = [
     process.env.CLIENT_URL,
     "https://fitness-studio-zeta.vercel.app",
     "https://fitness-studio-git-main-ines-464f.vercel.app",
     "http://localhost:5173",
     "http://localhost:3000"
-].filter(Boolean); // Filtra valores undefined si CLIENT_URL no está definida
+].filter(Boolean);
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Permitir solicitudes sin origen (como Postman o curl)
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
@@ -162,7 +194,7 @@ app.post('/api/bookmarks', async (req, res) => {
 // DELETE: Quitar clase de favoritos
 app.delete('/api/bookmarks', async (req, res) => {
     try {
-        const session = await auth.api.getSession({
+        const session = status = await auth.api.getSession({
             headers: new Headers({
                 cookie: req.headers.cookie || '',
                 authorization: req.headers.authorization || ''
