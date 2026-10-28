@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { formatPrice } from '../lib/format'
 
-const BACKEND_URL = 'https://pulsestudio.onrender.com'
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 export function MembershipCard({ plan }) {
     const navigate = useNavigate()
@@ -12,7 +12,7 @@ export function MembershipCard({ plan }) {
 
     const [isLoading, setIsLoading] = useState(false)
 
-    // Handle plan selection action by sending a request directly to Render backend
+    // Handle plan selection action by sending a request to the backend
     const handleChoosePlan = async () => {
         if (!session) {
             // Redirect user to login if not authenticated
@@ -23,7 +23,7 @@ export function MembershipCard({ plan }) {
         try {
             setIsLoading(true)
 
-            // 👈 CORREGIDO: Añadido '/select' y cambiado a 'planId' para que coincida con el backend
+            // Send request to backend to create a Stripe Checkout session
             const response = await fetch(`${BACKEND_URL}/api/memberships/select`, {
                 method: 'POST',
                 headers: {
@@ -34,8 +34,15 @@ export function MembershipCard({ plan }) {
             })
 
             if (response.ok) {
-                alert('Membership plan selected successfully!')
-                navigate('/') // Redirect to home page after successful selection
+                const data = await response.json()
+
+                // Redirect to Stripe Checkout URL if provided by the backend
+                if (data.url) {
+                    window.location.href = data.url
+                } else {
+                    alert('Membership plan selected successfully!')
+                    navigate('/')
+                }
             } else {
                 const errorData = await response.json()
                 console.error('Failed to select plan:', errorData)

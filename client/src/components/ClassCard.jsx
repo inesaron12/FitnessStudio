@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { useSession } from '../lib/auth'
 import { BookmarkToggle } from './BookmarkToggle'
 
-const BACKEND_URL = 'https://pulsestudio.onrender.com'
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 export function ClassCard({ item }) {
     const navigate = useNavigate()
@@ -12,7 +12,11 @@ export function ClassCard({ item }) {
     const [isSaved, setIsSaved] = useState(false)
     const [isBooking, setIsBooking] = useState(false)
 
-    // 1. Cargar el estado de favorito desde el backend al iniciar sesión
+    // New states to handle day and time slot selection
+    const [selectedDate, setSelectedDate] = useState('')
+    const [selectedTime, setSelectedTime] = useState('')
+
+    // 1. Fetch bookmark status from backend on session start
     useEffect(() => {
         if (!session) {
             setIsSaved(false)
@@ -39,10 +43,16 @@ export function ClassCard({ item }) {
         fetchBookmarkStatus()
     }, [session, item.id])
 
-    // Manejar la reserva de la clase conectando directamente a Render
+    // Handle class booking connecting directly to the backend
     const handleBookSpot = async () => {
         if (!session) {
             navigate('/login')
+            return
+        }
+
+        // Validate date and time selection before submitting
+        if (!selectedDate || !selectedTime) {
+            alert('Please select both a date and a time slot before booking.')
             return
         }
 
@@ -54,7 +64,11 @@ export function ClassCard({ item }) {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ classId: item.id }),
+                body: JSON.stringify({
+                    classId: item.id,
+                    date: selectedDate,
+                    time: selectedTime
+                }),
             })
 
             if (response.ok) {
@@ -71,7 +85,7 @@ export function ClassCard({ item }) {
         }
     }
 
-    // 2. Sincronizar el cambio de favorito con el backend de Render
+    // 2. Sync bookmark toggle state with backend
     const handleToggleBookmark = async () => {
         if (!session) {
             navigate('/login')
@@ -101,28 +115,58 @@ export function ClassCard({ item }) {
     }
 
     return (
-        <article className="overflow-hidden rounded-2xl border border-border bg-card transition hover:border-accent">
-            <img
-                src={item.image}
-                alt={item.name}
-                className="h-[180px] w-full object-cover"
-            />
-            <div className="p-4">
-                <div className="flex items-start justify-between gap-2">
-                    <div>
-                        <h3 className="font-semibold text-main">{item.name}</h3>
-                        <p className="text-sm text-muted">{item.category}</p>
+        <article className="overflow-hidden rounded-2xl border border-border bg-card transition hover:border-accent flex flex-col justify-between">
+            <div>
+                <img
+                    src={item.image}
+                    alt={item.name}
+                    className="h-[180px] w-full object-cover"
+                />
+                <div className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                        <div>
+                            <h3 className="font-semibold text-main">{item.name}</h3>
+                            <p className="text-sm text-muted">{item.category}</p>
+                        </div>
+
+                        <BookmarkToggle
+                            isBooked={isSaved}
+                            onToggle={handleToggleBookmark}
+                        />
                     </div>
 
-                    <BookmarkToggle
-                        isBooked={isSaved}
-                        onToggle={handleToggleBookmark}
-                    />
+                    <p className="mt-2 text-sm text-muted">{item.description}</p>
+
+                    {/* Date and Time Selector Inputs */}
+                    <div className="mt-4 space-y-3 bg-background/50 p-3 rounded-xl border border-border/60">
+                        <div>
+                            <label className="block text-xs font-medium text-muted mb-1">Select Day</label>
+                            <input
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                className="w-full rounded-lg border border-border bg-white text-slate-900 p-2 text-xs focus:outline-none focus:border-accent font-medium cursor-pointer"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-muted mb-1">Select Time Slot</label>
+                            <select
+                                value={selectedTime}
+                                onChange={(e) => setSelectedTime(e.target.value)}
+                                className="w-full rounded-lg border border-border bg-white text-slate-900 p-2 text-xs focus:outline-none focus:border-accent font-medium cursor-pointer"
+                            >
+                                <option value="" className="text-slate-400">Choose a time...</option>
+                                <option value="09:00" className="text-slate-900">09:00 AM - Morning Session</option>
+                                <option value="14:00" className="text-slate-900">02:00 PM - Afternoon Session</option>
+                                <option value="18:30" className="text-slate-900">06:30 PM - Evening Session</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <p className="mt-2 text-sm text-muted">{item.description}</p>
-
-                <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+            <div className="p-4 pt-0">
+                <div className="flex items-center justify-between border-t border-border pt-3">
                     <span className="text-xs font-semibold uppercase tracking-wider text-accent">
                         {item.intensity || 'All Levels'}
                     </span>

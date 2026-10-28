@@ -36,7 +36,7 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
             .set({ status: 'paid' })
             .where(eq(orders.id, stripeSession.id))
 
-        console.log(`✅ Orden ${stripeSession.id} marcada como PAGADA con éxito.`)
+        console.log(`✅ Order ${stripeSession.id} successfully marked as PAID.`);
     }
 
     res.json({ received: true })

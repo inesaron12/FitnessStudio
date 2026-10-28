@@ -73,7 +73,6 @@ router.post('/select', async (req, res) => {
 
         // 3. Create a Stripe Checkout Session
         const stripeSession = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
             line_items: [{
                 price_data: {
                     currency: 'usd',

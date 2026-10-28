@@ -7,6 +7,7 @@ import { Membership } from './components/Membership'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 import { Login } from './components/Login'
+import { SuccessPage } from './components/Success' // 👈 Import the new success page
 
 // Main landing page wrapper component
 function HomePage() {
@@ -33,6 +34,9 @@ function App() {
           {/* Authentication routes passing the active mode */}
           <Route path="/login" element={<Login mode="signin" />} />
           <Route path="/signup" element={<Login mode="signup" />} />
+
+          {/* Success route after Stripe checkout */}
+          <Route path="/success" element={<SuccessPage />} />
         </Routes>
         <Footer />
       </div>
