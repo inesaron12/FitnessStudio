@@ -7,7 +7,7 @@ import { Membership } from './components/Membership'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 import { Login } from './components/Login'
-import { SuccessPage } from './components/Success' // 👈 Import the new success page
+import { SuccessPage } from './components/Success'
 
 // Main landing page wrapper component
 function HomePage() {
@@ -37,6 +37,13 @@ function App() {
 
           {/* Success route after Stripe checkout */}
           <Route path="/success" element={<SuccessPage />} />
+
+          {/* Classes route for booking spots */}
+          <Route path="/classes" element={
+            <div className="py-12">
+              <Classes />
+            </div>
+          } />
         </Routes>
         <Footer />
       </div>
