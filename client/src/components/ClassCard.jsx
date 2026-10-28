@@ -72,7 +72,8 @@ export function ClassCard({ item }) {
             })
 
             if (response.ok) {
-                alert('Spot booked successfully!')
+                alert('Spot booked successfully! 🎉')
+                navigate('/')
             } else {
                 const errorData = await response.json()
                 alert(errorData.error || 'Failed to book spot. Please try again.')
