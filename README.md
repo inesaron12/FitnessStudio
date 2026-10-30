@@ -1,16 +1,50 @@
-# React + Vite
+# 🏋️‍♂️ PulseStudio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PulseStudio is a modern full-stack web application designed for a fitness studio, featuring user authentication, interactive class scheduling with date/time selection, and secure payment processing via Stripe.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Key Features
 
-## React Compiler
+- **User Authentication:** Secure sign-in and sign-up powered by **Better Auth** with session cookie management.
+- **Class Booking System:** Interactive class catalog with custom date and time slot pickers (`09:00 AM`, `02:00 PM`, `06:30 PM`), preventing unauthenticated actions.
+- **Secure Stripe Payments:** Integrated Stripe Checkout session generation with server-side price validation.
+- **Webhook Processing:** Robust backend webhook handler (`checkout.session.completed`) that reliably updates order status and confirms secure transactions.
+- **Responsive UI:** Clean, dark-mode-first modern interface built with Tailwind CSS and React Router.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### **Frontend**
+- **React** (with Vite)
+- **React Router** for client-side routing
+- **Tailwind CSS** for styling
+
+### **Backend**
+- **Node.js** & **Express**
+- **Better Auth** (Authentication & session handling)
+- **Stripe API** (Checkout & Webhooks)
+
+### **Database & Deployment**
+- **PostgreSQL** hosted on **Neon**
+- **Vercel** (Frontend hosting & API proxy rewrites)
+- **Render** (Backend server hosting)
+
+---
+
+## 📂 Project Structure
+
+```text
+pulsestudio/
+├── client/                 # Frontend React application
+│   ├── src/
+│   │   ├── components/     # UI Components (Header, ClassCard, Success, Login, etc.)
+│   │   ├── lib/            # Utilities & Auth client configuration
+│   │   ├── App.jsx         # Main router setup
+│   │   └── main.jsx
+│   └── vercel.json         # Vercel rewrites and routing rules
+└── server/                 # Backend Express application
+    ├── src/
+    │   └── index.js        # API endpoints, Stripe checkout, and webhook handlers
+    └── package.json
